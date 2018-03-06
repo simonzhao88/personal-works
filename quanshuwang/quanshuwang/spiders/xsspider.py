@@ -7,18 +7,42 @@ import re
 class Xsspiderspider(scrapy.Spider):
     name = "xsspider"
     allowed_domains = ["quanshuwang.com"]
-    start_urls = ['http://www.quanshuwang.com/list/1_1.html']
+    start_urls = ['http://www.quanshuwang.com']
+    bangdan = {'玄幻魔法':1,'武侠修真':2,'纯爱耽美':3,'都市言情':4,'职场校园':5,'穿越重生':6,'历史军事':7,'网游动漫':8,'恐怖灵异':9,'科幻小说':10,'美文名著':11,'热门推荐':12}
+    paihang_list = []
     novel_list = []
     url = 'http://www.quanshuwang.com/list/'
-    # def get_url(self,url):
-    #     for i in range(1, 3):
-    #         url1 = self.url + str(i) + '_'
-    #         for j in range(2, 4):
-    #             url2 = url1 + str(j) + '.html'
-    #             print(url2)
-    #             self.start_urls.append(url2)
-        # return self.start_urls
+    try:
+        m = bangdan[input("请输入要爬取的榜单：")]
+        m = str(m)
+    except:
+        print("请输入正确的榜单！")
+    try:
+        n = input("请输入要爬取多少页：")
+        n = int(n)
+    except:
+        print("请输入正确的页数！")
     def parse(self, response):
+            url1 = self.url + self.m + '_'
+            for j in range(1,self.n+1):
+                url2 = url1 + str(j) + '.html'
+                self.paihang_list.append(url2)
+                # print(self.paihang_list)
+        # paihang_urls = response.xpath('//*[@id="channel-header"]/div/nav/ul/li/a/@href').extract()
+        # print(paihang_urls)
+        # for paihang_url in paihang_urls:
+        #     ph_url = re.findall(r"(http://www.quanshuwang.com/list/\d+_)\d+.html",paihang_url)
+        #     ph_url1 = "".join(ph_url)
+        #     for i in range(1,5):
+        #         ph_url2 = ph_url1 + str(i) + '.html'
+                '''将定死的爬取添加交互功能'''
+                self.paihang_list.append(url2)
+                # print(self.paihang_list)
+                self.paihang_list = list(set(self.paihang_list))
+            for paihang in self.paihang_list:
+                yield scrapy.Request(paihang, callback=self.parse_html)
+
+    def parse_html(self, response):
         books = response.xpath('//*[@id="navList"]/section/ul/li/span/a[1]/@href').extract()
         # 找到每一类小说的每一本小说的下载链接
         # print(books)

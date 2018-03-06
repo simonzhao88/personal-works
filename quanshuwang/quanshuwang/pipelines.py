@@ -21,7 +21,7 @@ class QuanshuwangPipeline(object):
         # 与本地数据库建立联系
         # 和本地的scrapyDB数据库建立连接
         connection = pymysql.connect(
-            host='192.168.1.28',  # 连接的是本地数据库
+            host='192.168.0.118',  # 连接的是本地数据库
             user='root',  # 自己的mysql用户名
             passwd='root',  # 自己的密码
             db='database_test',  # 数据库的名字

@@ -19,17 +19,22 @@ class Xsspiderspider(scrapy.Spider):
     #             self.start_urls.append(url2)
         # return self.start_urls
     def parse(self, response):
-        books = response.xpath('//*[@id="channel-header"]/div/nav/ul/li/a')
+        books = response.xpath('//*[@id="navList"]/section/ul/li/span/a[1]/@href').extract()
         # 找到每一类小说的每一本小说的下载链接
+        # print(books)
         for book in books:
-            links = book.xpath('//*[@id="navList"]/section/ul/li[1]/span/a[3]')
-            for link in links:
-                url = link.xpath('//*[@id="navList"]/section/ul/li/span/a[3]/@href').extract()[0]
-                url = re.findall(r"\d+",url)
-                url1 = "".join(url)
-                url = 'http://www.quanshuwang.com/book/' + url1[:3] + '/' + url1
-                self.novel_list.append(url)
-            # self.novel_list = list(set(self.novel_list))
+            # links = book.xpath('//*[@id="container"]/div[2]/section/div/div[1]/div[2]/a[1]')
+            # print(links)
+            # for link in links:
+            #     url = link.xpath('//*[@id="container"]/div[2]/section/div/div[1]/div[2]/a[1]/@href').extract()[0]
+            url = re.findall(r"http://www.quanshuwang.com/book_(\d+)",book)
+            # print(url)
+            url1 = "".join(url)
+            # print(url1)
+            url = 'http://www.quanshuwang.com/book/' + url1[:3] + '/' + url1
+            # print(url)
+            self.novel_list.append(url)
+            self.novel_list = list(set(self.novel_list))
             for novel in self.novel_list:
                 yield scrapy.Request(novel, callback=self.get_page_url)
 
